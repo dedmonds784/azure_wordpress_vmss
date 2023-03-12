@@ -1,0 +1,4 @@
+client_name,resource_group,location_id,client_tag,invoice_section_name
+Fictional Company,rg-fictionalcompany,East US,fictionalcompany,PPPP-PPPP-PPP-PPP
+Big and Fancy,rg-bigandfancy,East US,bigandfancy,PPPP-PPPP-PPP-PPP
+The Great Escape,rg-thegreatescape,East US,thegreatescape,PPPP-PPPP-PPP-PPP
