@@ -15,7 +15,10 @@ resource "azurerm_subnet" "wordpress_subnet_backend" {
   virtual_network_name = azurerm_virtual_network.wordpress_vnet.name
   address_prefixes     = ["10.0.2.0/24"]
 
-  private_endpoint_network_policies_enabled     = false
+  private_endpoint_network_policies_enabled = false
+  service_endpoints = [
+    "Microsoft.Sql", "Microsoft.Storage"
+  ]
 }
 
 resource "azurerm_subnet" "wordpress_subnet_frontend" {
@@ -90,6 +93,6 @@ resource "azurerm_application_gateway" "wordpress_application_gateway" {
     http_listener_name         = "${var.client_tag}-httplstn-${var.environment_prefix}"
     backend_address_pool_name  = "${var.client_tag}-beap-${var.environment_prefix}"
     backend_http_settings_name = "${var.client_tag}-be-htst-${var.environment_prefix}"
-    priority = 1
+    priority                   = 1
   }
 }

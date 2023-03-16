@@ -30,12 +30,19 @@ resource "azurerm_mysql_database" "wordpress_database" {
 }
 
 # Config MySQL Server Firewall Rule
-resource "azurerm_mysql_firewall_rule" "wordpress" {
+resource "azurerm_mysql_firewall_rule" "wordpress_firewall_rule" {
   name                = "${var.client_tag}-wordpress-mysql-firewall-rule-${var.environment_prefix}"
   resource_group_name = local.environment_resource_group
   server_name         = azurerm_mysql_server.wordpress_database_server.name
-  start_ip_address    = azurerm_public_ip.wordpress_public_ip.ip_address
-  end_ip_address      = azurerm_public_ip.wordpress_public_ip.ip_address
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
+}
+
+resource "azurerm_mysql_virtual_network_rule" "wordpress_vnet_rile" {
+  name                = "${var.client_tag}-mysql-vnet-rule-${var.environment_prefix}"
+  resource_group_name = local.environment_resource_group
+  server_name         = azurerm_mysql_server.wordpress_database_server.name
+  subnet_id           = azurerm_subnet.wordpress_subnet_backend.id
 }
 
 data "azurerm_mysql_server" "wordpress" {
@@ -65,6 +72,6 @@ resource "azurerm_private_endpoint" "wordpress_database_private_endpoint" {
     name                           = "${var.client_tag}-${var.environment_prefix}-privateserviceconnection-mysql"
     private_connection_resource_id = azurerm_mysql_server.wordpress_database_server.id
     is_manual_connection           = false
-    subresource_names = ["mysqlServer"]
+    subresource_names              = ["mysqlServer"]
   }
 }

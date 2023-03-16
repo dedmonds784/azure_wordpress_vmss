@@ -44,6 +44,6 @@ resource "azurerm_private_endpoint" "wordpress_storage_private_endpoint" {
     name                           = "${var.client_tag}-${var.environment_prefix}-privateserviceconnection-storage"
     private_connection_resource_id = azurerm_storage_account.wordpress_storage_account.id
     is_manual_connection           = false
-    subresource_names = ["file"]
+    subresource_names              = ["file"]
   }
 }
