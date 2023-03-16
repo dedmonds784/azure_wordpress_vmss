@@ -26,12 +26,12 @@ resource "azurerm_linux_virtual_machine_scale_set" "wordpress" {
     primary = true
 
     ip_configuration {
-      name                                   = "${var.client_tag}IPConfiguration${var.environment_prefix}"
-      subnet_id                              = azurerm_subnet.wordpress_subnet_backend.id
+      name      = "${var.client_tag}IPConfiguration${var.environment_prefix}"
+      subnet_id = azurerm_subnet.wordpress_subnet_backend.id
       application_gateway_backend_address_pool_ids = tolist([
         tolist(azurerm_application_gateway.wordpress_application_gateway.backend_address_pool).0.id,
       ])
-      primary                                = true
+      primary = true
     }
   }
 
@@ -47,10 +47,12 @@ resource "azurerm_linux_virtual_machine_scale_set" "wordpress" {
 data "template_file" "script" {
   template = file("${path.module}/cloud-init.tpl")
   vars = {
-    "database_fqdn" = "${azurerm_mysql_server.wordpress_database_server.fqdn}"
+    "database_fqdn"                  = "${azurerm_mysql_server.wordpress_database_server.fqdn}"
     "wordpress_storage_account_name" = "${azurerm_storage_account.wordpress_storage_account.name}"
-    "client_tag" = "${var.client_tag}"
-    "environment_prefix" = "${var.environment_prefix}"
+    "client_tag"                     = "${var.client_tag}"
+    "environment_prefix"             = "${var.environment_prefix}"
+    "database_password"              = "${random_password.dbpassword.result}"
+    "database_user"                  = "${var.client_tag}wp"
   }
 }
 
@@ -61,9 +63,10 @@ data "template_cloudinit_config" "config" {
   part {
     content_type = "text/cloud-config"
     content      = data.template_file.script.rendered
+
   }
 }
 
-output cloud_init {
+output "cloud_init" {
   value = data.template_file.script.rendered
 }
